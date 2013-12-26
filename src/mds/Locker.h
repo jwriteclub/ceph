@@ -45,7 +45,6 @@ class MLock;
 
 class MClientRequest;
 
-class Anchor;
 class Capability;
 class LogSegment;
 
