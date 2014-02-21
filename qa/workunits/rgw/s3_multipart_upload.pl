@@ -77,7 +77,7 @@ sub get_status {
     my $service = "radosgw";
     my $cmd = "ps -ef | grep $service | grep -v grep";
     my $status = get_cmd_op($cmd);
-    if ($status =~ /client.radosgw/ ){
+    if ($status =~ m/client.radosgw/ ){
         return 0;
     }
     return 1;
