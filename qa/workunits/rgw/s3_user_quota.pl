@@ -386,7 +386,7 @@ sub test_user_quota_max_size{
 sub check
 {
     my $state = get_status();
-    if ($state) {
+    if (!$state) {
         exit 1;
     }
    }
