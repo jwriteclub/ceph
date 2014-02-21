@@ -45,7 +45,7 @@ Pod::Usage::pod2usage(-verbose => 1) && exit if ($help);
 my $s3;
 my $domain   = "front.sepia.ceph.com";
 my $host     = get_hostname();
-our $hostname = "$host.$domain";
+our $hostname = "$host.$domain:7280";
 my $testfileloc;
 my $sec;
 my $min;
@@ -266,7 +266,7 @@ sub delete_bucket {
 sub check
 {
     my $state = get_status();
-    if ($state) {
+    if (!$state) {
         exit 1;
     }
 }
