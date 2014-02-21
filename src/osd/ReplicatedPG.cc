@@ -9622,6 +9622,13 @@ int ReplicatedPG::recover_backfill(
 	   << dendl;
   }
 
+  // Handle race where we resume recovery at a snapdir and a head was
+  // deleted and snapdir created.
+  if (last_backfill_started.is_snapdir()) {
+    dout(10) << __func__
+      << ": starting on snapdir, backing up to head" << dendl;
+    last_backfill_started = last_backfill_started.get_head();
+  }
   // update our local interval to cope with recent changes
   backfill_info.begin = last_backfill_started;
   update_range(&backfill_info, handle);
