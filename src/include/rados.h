@@ -242,6 +242,9 @@ enum {
 	/* convert tmap to omap */
 	CEPH_OSD_OP_TMAP2OMAP = CEPH_OSD_OP_MODE_RMW | CEPH_OSD_OP_TYPE_DATA | 34,
 
+	/* hints */
+	CEPH_OSD_OP_SETALLOCHINT = CEPH_OSD_OP_MODE_WR | CEPH_OSD_OP_TYPE_DATA | 35,
+
 	/** multi **/
 	CEPH_OSD_OP_CLONERANGE = CEPH_OSD_OP_MODE_WR | CEPH_OSD_OP_TYPE_MULTI | 1,
 	CEPH_OSD_OP_ASSERT_SRC_VERSION = CEPH_OSD_OP_MODE_RD | CEPH_OSD_OP_TYPE_MULTI | 2,
@@ -463,6 +466,11 @@ struct ceph_osd_op {
 		struct {
 			__u8 flags;
 		} __attribute__ ((packed)) tmap2omap;
+		struct {
+			__le64 expected_size;
+			__le64 expected_write_size;
+			__u8 expected_size_probability;
+		} __attribute__ ((packed)) hint;
 	};
 	__le32 payload_len;
 } __attribute__ ((packed));

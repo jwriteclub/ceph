@@ -453,6 +453,15 @@ void librados::ObjectWriteOperation::selfmanaged_snap_rollback(snap_t snapid)
   o->rollback(snapid);
 }
 
+void librados::ObjectWriteOperation::set_alloc_hint(uint64_t expected_size,
+                                            uint64_t expected_write_size,
+                                            uint8_t expected_size_probability)
+{
+  ::ObjectOperation *o = (::ObjectOperation *)impl;
+  o->set_alloc_hint(expected_size, expected_write_size,
+                    expected_size_probability);
+}
+
 librados::WatchCtx::
 ~WatchCtx()
 {
@@ -1392,6 +1401,16 @@ int librados::IoCtx::list_snaps(const std::string& oid,
 void librados::IoCtx::set_notify_timeout(uint32_t timeout)
 {
   io_ctx_impl->set_notify_timeout(timeout);
+}
+
+int librados::IoCtx::set_alloc_hint(const std::string& o,
+                                    uint64_t expected_size,
+                                    uint64_t expected_write_size,
+                                    uint8_t expected_size_probability)
+{
+  object_t oid(o);
+  return io_ctx_impl->set_alloc_hint(oid, expected_size, expected_write_size,
+                                     expected_size_probability);
 }
 
 void librados::IoCtx::set_assert_version(uint64_t ver)
@@ -2932,6 +2951,17 @@ int rados_notify(rados_ioctx_t io, const char *o, uint64_t ver, const char *buf,
   return ctx->notify(oid, ver, bl);
 }
 
+extern "C" int rados_set_alloc_hint(rados_ioctx_t io, const char *o,
+                                    uint64_t expected_size,
+                                    uint64_t expected_write_size,
+                                    uint8_t expected_size_probability)
+{
+  librados::IoCtxImpl *ctx = (librados::IoCtxImpl *)io;
+  object_t oid(o);
+  return ctx->set_alloc_hint(oid, expected_size, expected_write_size,
+                             expected_size_probability);
+}
+
 extern "C" int rados_lock_exclusive(rados_ioctx_t io, const char * o,
 			  const char * name, const char * cookie,
 			  const char * desc, struct timeval * duration,
@@ -3205,6 +3235,16 @@ extern "C" void rados_write_op_omap_rm_keys(rados_write_op_t write_op,
 extern "C" void rados_write_op_omap_clear(rados_write_op_t write_op)
 {
   ((::ObjectOperation *)write_op)->omap_clear();
+}
+
+extern "C" void rados_write_op_set_alloc_hint(rados_write_op_t write_op,
+                                            uint64_t expected_size,
+                                            uint64_t expected_write_size,
+                                            uint8_t expected_size_probability)
+{
+  ((::ObjectOperation *)write_op)->set_alloc_hint(expected_size,
+                                                  expected_write_size,
+                                                  expected_size_probability);
 }
 
 extern "C" int rados_write_op_operate(rados_write_op_t write_op,

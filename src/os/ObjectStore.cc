@@ -490,6 +490,22 @@ void ObjectStore::Transaction::dump(ceph::Formatter *f)
       }
       break;
 
+    case Transaction::OP_SETALLOCHINT:
+      {
+        coll_t cid = i.get_cid();
+        ghobject_t oid = i.get_oid();
+        uint64_t expected_size = i.get_length();
+        uint64_t expected_write_size = i.get_length();
+        uint8_t expected_size_probability = i.get_u8();
+        f->dump_string("op_name", "op_setallochint");
+        f->dump_stream("collection") << cid;
+        f->dump_stream("oid") << oid;
+        f->dump_stream("expected_size") << expected_size;
+        f->dump_stream("expected_write_size") << expected_write_size;
+        f->dump_stream("expected_size_probability") << (int)expected_size_probability;
+      }
+      break;
+
     default:
       f->dump_string("op_name", "unknown");
       f->dump_unsigned("op_code", op);

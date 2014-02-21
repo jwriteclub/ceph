@@ -1204,6 +1204,18 @@ int librados::IoCtxImpl::notify(const object_t& oid, uint64_t ver, bufferlist& b
   return r;
 }
 
+int librados::IoCtxImpl::set_alloc_hint(const object_t& oid,
+                                        uint64_t expected_size,
+                                        uint64_t expected_write_size,
+                                        uint8_t expected_size_probability)
+{
+  ::ObjectOperation wr;
+  prepare_assert_ops(&wr);
+  wr.set_alloc_hint(expected_size, expected_write_size,
+                    expected_size_probability);
+  return operate(oid, &wr, NULL);
+}
+
 version_t librados::IoCtxImpl::last_version()
 {
   return last_objver;
